@@ -3,12 +3,6 @@ title: Setting Up
 layout: default
 num: 1
 ---
-##test##
-blablabla
-
-```java
-   var i = 3;
-```
 
 [Bonjour](google.com)
 [Image](http://media.melty.fr/google-journee-de-la-femme-image-438484-article-ajust_930.jpg)
@@ -16,7 +10,6 @@ blablabla
 ##Base Code##
 
 ```java
-
 #include <iostream>
 
 #include <SFML/Window.hpp>
@@ -30,13 +23,14 @@ int main (int argc, char** argv)
 	RtAudio adac;
 	if (adac.getDeviceCount() < 1)
     {
-		std::cout << "\nNo audio devices found!\n";
+		std::cout << "\nNo audio devices found!\n" << std::endl;
 		return EXIT_FAILURE;
 	}
 
     // create a window
     sf::RenderWindow window(sf::VideoMode(640, 480), "Blast it!", sf::Style::Default);
     window.setActive();
+    window.setKeyRepeatEnabled(false);
 
     // main loop
     while (window.isOpen())
@@ -56,22 +50,28 @@ int main (int argc, char** argv)
                 case sf::Event::Resized:
                     window.setView(sf::View(sf::FloatRect(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
                     break;
+                    
+                // Key pressed
+                case sf::Event::KeyPressed:
+                    switch (event.key.code)
+                    {
+                        case sf::Keyboard::Escape:
+                            window.close();
+                            break;
+                    }
+                    break;
             }
         }
-
-        // display
-        window.clear();
-        window.display();
     }
 
     return EXIT_SUCCESS;
 }
-
 ```
 
 ##Digital Audio##
 
 ###Sound###
+
 Sound is basically waves travelling in the air, an analog signal. 
 Computer-based audio hardware converts this signal to digital in order to be stored or treated by software, and converts the digital back to analog to be able to output it to a pair of headphones or speakers.
 
@@ -92,18 +92,17 @@ In order to easily access the individual channels we’ll represent audio buffer
 Therefor, to allocate a 512-sample-long stereo buffer we’ll do:
 
 ```java
-short* buffer = new short[512 * 2];
+short* buffer = new short[512 * 2 * 2];
 ```
 
 ###Init Audio Stream###
 
 For this workshop we’ll configure the audio system like this:
 frequency: 44100 Hz
-16bit / channel / sample
 2 channels (stereo) interleaved
 512 samples audio buffer
 
-Let’s create a Data structure that will hold with those information:
+Let’s create a global "Data" structure that will hold with those information:
 
 ```java
 struct Data
@@ -112,17 +111,13 @@ struct Data
     unsigned char channels = 2;
     unsigned int sampleRate = 44100;
     unsigned int bufferFrames = 512;
-    unsigned char channelBytes = 2;
-    unsigned int bufferBytes = 0;
 };
 ```
 
-Create an object of type Data and set the bufferBytes attribute with the size of the audio buffers we will deal with (in bytes):
+Create an object of type Data at the very beginning of the main function:
 
 ```java
     Data data;
-    data.bufferBytes = data.bufferFrames * data.channels * data.channelBytes;
-
 ```
 
 Using both input and output, we will use RtAudio in duplex mode.
@@ -197,11 +192,163 @@ To prevent our program from quitting directly, let's add a sleep call of 100 in 
 
 ##Monitoring##
 
-Ok! So, it's nice, we have our audio system running but we don't hear anything do we? 
-Let's add a single line to the callback function to actually hear us speaking through our headphones!
+Ok! So, it's nice, we have our audio system running but we don't hear anything yet do we?
+With an extra line in the callback function we can actually hear us singing through our headphones.
+
+```java
+    memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(int));
+```
+
+Every audio frame, we basically copy the input buffer to the output one, creating kind of an audio monitoring system.
 
 ##Visualization##
 
-##Sampler##
+Wouldn't it be nice to actually visualize the buffer that comes out? 
+
+The we will create a buffer that will hold a frame of audio so we can display it as lines.
+To do so, let's add an display buffer in our Data struct.
+
+```java
+    short* displayBuffer = NULL;
+```
+
+... then initialize it with in the main function:
+
+```java
+    data.displayBuffer = new short[data.bufferFrames * data.channels];
+    memset(data.displayBuffer, 0, data.bufferFrames * data.channels * sizeof(short));
+```
+
+We need to update the buffer every audio frame, we'll add the following line at the end of the audio callback:
+
+```java
+    if (data->displayBuffer)
+        memcpy(data->displayBuffer, (short*)outputBuffer, data->bufferFrames * data->channels * sizeof(short));
+```
+
+Finally we'll put the actual drawing code at the end of the main loop.
+
+```java
+        sf::VertexArray lines(sf::LinesStrip, data.bufferFrames);
+        int yOffset = window.getSize().y / 2;
+        int yScale = 65535 / window.getSize().y * 1.1;
+        float xStep = (float)window.getSize().x / data.bufferFrames;
+        for (int i=0;
+             i < data.bufferFrames;
+             i++)
+        {
+            lines[i].position = sf::Vector2f(xStep * i, yOffset + data.displayBuffer[i*2] / yScale);
+        }
+        window.clear();
+        window.draw(lines);
+        window.display();
+```
+
+We basically draw a series of lines joining the samples of the audio buffer continuously, the values being centered along the horizontal axis of the window.
+
+##Sampling##
+
+We now can hear and watch audio, but let's do something a bit more fun.
+We will create a loop station, similar to the looping pedal beatboxers use.
+
+Let's add a few members to the Data struct:
+
+```java
+    // sampling
+    bool playing = false;
+    bool recording = false;
+    short* samplingBuffer = NULL;
+    unsigned int samplingBufferMaxFrames = 0;
+    unsigned int samplingBufferCurrentFrames = 0;
+    unsigned int playbackCursor = 0;
+```
+
+We initialize the buffer so it can hold about 5 seconds of audio.
+For conveniency we make sure the buffer has a number of samples that's a multiple of data.bufferFrames (= 512).
+
+```java
+    // init the sampling data
+    char maxSeconds = 5;
+    data.samplingBufferMaxFrames = data.sampleRate * maxSeconds;
+    data.samplingBufferMaxFrames -= data.samplingBufferMaxFrames % data.bufferFrames;
+    data.samplingBuffer = new short[data.samplingBufferMaxFrames * data.channels];
+```
+
+###Recording###
+
+In the audio callback we will copy the successive audio-input buffers to the sampling buffer, until the user stops it or when its full.
+We keep track of the number of recorded frames in data->samplingBufferCurrentFrames.
+
+```java
+    // recording
+    if (data->recording)
+    {
+        // record samples
+        short* buffer = data->samplingBuffer + data->samplingBufferCurrentFrames * data->channels;
+        memcpy((void*)buffer, inputBuffer, data->bufferFrames * data->channels * sizeof(short));
+        data->samplingBufferCurrentFrames += nBufferFrames;
+        if (data->samplingBufferCurrentFrames >= data->samplingBufferMaxFrames)
+        {
+            data->recording = false;
+            data->playing = true;
+        }
+    }
+```
+
+###Playback###
+
+When playing back we go the other way around, we increment the playback cursor and copy the right number of audio frames to the output buffer. 
+In this case we use samplingBufferCurrentFrames as the maximum frame we can play until we have to loop the cursor back to the beginning.
+We do so by using the modulo (%) operator which is perfect for looping.
+
+```java
+    if (data->playing && data->samplingBufferCurrentFrames > 0)
+    {
+        // play the sampling buffer in loop
+        short* buffer = data->samplingBuffer + data->playbackCursor * data->channels;
+        data->playbackCursor += nBufferFrames;
+        data->playbackCursor %= data->samplingBufferCurrentFrames;
+        memcpy(outputBuffer, buffer, data->bufferFrames * data->channels * sizeof(short));
+    }
+```
+
+Remark: 
+You may want to temporarily deactivate the monitoring to be able to listen to the audio playback.
+Don't worry, we will re-activate it a bit later.
+
+###Control###
+
+We miss a way to control the recording and playback at will. 
+Let's go to the main function and handle two new key events.
+
+```java
+                        case sf::Keyboard::Space:
+                            data.recording = !data.recording;
+                            data.playing = !data.recording;
+                            if (data.recording)
+                                data.samplingBufferCurrentFrames = 0;
+                            else
+                                data.playbackCursor = 0;
+                            break;
+                            
+                        case sf::Keyboard::Return:
+                            data.playing = !data.playing;
+                            if (data.playing)
+                                data.playbackCursor = 0;
+                            break;
+```
+
+You will record a new audio loop by pressing Space once to start and another time to stop.
+The playback will start immediately after the recording's finished.
+When you're bored of listening to the same loop over and over, you can either record a new one, or stop it by pressing the Return key - you can press it again to restart the loop.
+
+HAVE FUN: play the buffer faster or slower
+
+##Mixing##
+
+Wouldn't it be nice if we could mix the playback and the monitoring? 
+
+
+
 
 ##Effect##
