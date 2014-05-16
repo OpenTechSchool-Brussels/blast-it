@@ -4,10 +4,12 @@ layout: default
 num: 1
 ---
 
-[Bonjour](google.com)
-[Image](http://media.melty.fr/google-journee-de-la-femme-image-438484-article-ajust_930.jpg)
+[Pierre Guilluy](http://proteinderklang.com/Credits/PierreGuilluy.html)
 
 ##Base Code##
+
+Here's the base code you can copy and paste in main.cpp, compile and run to make sure both RtAudio and SFML run fine on your system.
+This code first makes sure RtAudio is functionnal, then creates a window and runs an event loop using SFML.
 
 ```java
 #include <iostream>
@@ -318,7 +320,7 @@ Don't worry, we will re-activate it a bit later.
 
 ###Control###
 
-We miss a way to control the recording and playback at will. 
+We miss a way to control the recording and playback at will.
 Let's go to the main function and handle two new key events.
 
 ```java
@@ -341,13 +343,51 @@ Let's go to the main function and handle two new key events.
 You will record a new audio loop by pressing Space once to start and another time to stop.
 The playback will start immediately after the recording's finished.
 When you're bored of listening to the same loop over and over, you can either record a new one, or stop it by pressing the Return key - you can press it again to restart the loop.
+Note that we make sure the different cursors are reset before recording or playing back. 
 
-HAVE FUN: play the buffer faster or slower
+Have fun:
+You can easily modify the playback algorithm to modify the speed of the playback, and control it using the mouse for example.
 
 ##Mixing##
 
-Wouldn't it be nice if we could mix the playback and the monitoring? 
+At this point we can either monitor our audio input or use a loop station.
+Wouldn't it be nice if we could mix both, so we can sing on top of a beatbox loop for example?
 
+Like on a mixing table, we will combine several signals in a single one.
+In addition to that, each signal will have its own audio gain so we can control its weight in the mix.
+
+In digital audio, mixing signals is basically their values on top of each other.
+As you might think the process will quickly generate values that are greater that what's possible in 16bit.
+
+In order to prevent that from happening we will perform the mixing of the different signal values in an buffer of integers (32bit) that can hold much bigger values than a buffer of shorts (16bit).
+
+We will first add such a buffer in the Data structure
+
+```java
+    // mixing
+    int* mixingBuffer = NULL;
+```
+
+and instanciate it with the same size as the others, the difference being that one value has twice the size of the previous buffers:
+
+```java
+data.mixingBuffer = new int[data.bufferFrames * data.channels];
+```
+
+Remark:
+Make sure to do so before starting the audio stream!
+
+The idea now is to reset the mixing buffer before adding values from different signal into it.
+
+First, make sure to fill the mixing buffer with zeros at the very beginning of the audio callback:
+
+```java
+    memset(data->mixingBuffer, 0, data->bufferFrames * data->channels * sizeof(int));
+```
+
+Note that we use sizeof(int) instead of sizeof(short);
+
+Then,
 
 
 
