@@ -59,7 +59,7 @@ Now we can open an audio stream by using the different values we've just setup:
 
 We pass our Data object as the last argument "void* userData" so it will passed to the callback function.
 
-Remark:
+Remark:  
 In case of an error occuring, RtAudio functions throw exceptions instead of returning an error code.
 
 Before starting the stream, we need to create an 'ioCallback' function that will be called every 512 samples. 
@@ -82,10 +82,10 @@ int ioCallback (void *outputBuffer,
 
 We got our Data object back from the callback userData.
 
-Remark: 
+Remark:  
 In Duplex mode, RtAudio calls a single callback, but using other APIs you can get an input callback + an output callback.
 
-Remark: 
+Remark:   
 The audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
 
 Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called:
@@ -107,7 +107,7 @@ Ok! So, it's nice, we have our audio system running but we don't hear anything y
 With an extra line in the callback function we can actually hear us singing through our headphones.
 
 ```java
-    memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(int));
+    memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(short));
 ```
 
 Every audio frame, we basically copy the input buffer to the output one, creating kind of an audio monitoring system.

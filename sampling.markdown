@@ -70,7 +70,7 @@ We do so by using the modulo (%) operator which is perfect for looping.
     }
 ```
 
-Remark: 
+Remark:  
 You may want to temporarily deactivate the monitoring to be able to listen to the audio playback.
 Don't worry, we will re-activate it a bit later.
 
@@ -101,7 +101,7 @@ The playback will start immediately after the recording's finished.
 When you're bored of listening to the same loop over and over, you can either record a new one, or stop it by pressing the Return key - you can press it again to restart the loop.
 Note that we make sure the different cursors are reset before recording or playing back. 
 
-Have fun:
+Have fun:  
 You can easily modify the playback algorithm to modify the speed of the playback, and control it using the mouse for example.
 
 ##Mixing##
@@ -130,7 +130,7 @@ and instanciate it with the same size as the others, the difference being that o
 data.mixingBuffer = new int[data.bufferFrames * data.channels];
 ```
 
-Remark:
+Remark:  
 Make sure to do so before starting the audio stream!
 
 The idea now is to reset the mixing buffer before adding values from different signal into it.
@@ -182,6 +182,12 @@ Finally we can put the clipping loop right before the displayBuffer code:
     }
 ```
 
-
+Remark:  
+At some point, if you're tired about listening through the ambiant noise through the monitoring, don't hesitate to add a `bool monitoring;` in the `Data` structure and toggle it using a keyboard press event.
 
 ##Effect##
+
+Before starting with the audio synthesis chapter, let's have fun and modify the values of our `mixingBuffer` before rendering it to the `outputBuffer`. 
+
+To do so we'll create a new function that will apply an effect directly on
+
