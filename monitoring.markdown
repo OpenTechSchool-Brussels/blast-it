@@ -16,6 +16,7 @@ struct Data
     // audio
     unsigned char channels = 2;
     unsigned int sampleRate = 44100;
+    RtAudioFormat sampleFormat = RTAUDIO_SINT16;    
     unsigned int bufferFrames = 512;
 };
 ```
@@ -40,7 +41,7 @@ In case of an error occuring, RtAudio functions throw exceptions instead of retu
 ```java
 	try
 	{
-		adac.openStream( &oParams, &iParams, RTAUDIO_SINT16, data.sampleRate, &data.bufferFrames, &ioCallback, (void*)&data);
+		adac.openStream( &oParams, &iParams, data.sampleFormat, data.sampleRate, &data.bufferFrames, &ioCallback, (void*)&data);
 	}
 	catch (RtAudioError& e)
 	{
@@ -66,11 +67,13 @@ int ioCallback (void *outputBuffer,
 }
 ```
 
-Remark: 
+We got our Data object back from the callback userData.
+
+Remark:  
 In Duplex mode, RtAudio calls a single callback, but using other APIs you can get an input callback + an output callback.
 
-Remark: 
-The audio callback occures in a thread of its own (in order to run in parallel). This is important to keep in mind if you plan to share data with the audio engine.
+Remark:   
+The audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
 
 Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called:
 
@@ -92,7 +95,7 @@ Ok! So, it's nice, we have our audio system running but we don't hear anything y
 Through the power of memcpy, and with just an extra line in the callback function we can actually hear us singing through our headphones.
 
 ```java
-    memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(int));
+    memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(short));
 ```
 
 Every audio frame, we basically copy the input buffer to the output one, creating kind of an audio monitoring system.
