@@ -64,6 +64,7 @@ int ioCallback (void *outputBuffer,
 {
     Data* data = (Data*)userData;
     std::cout << streamTime << std::endl;
+    return 0;
 }
 ```
 
