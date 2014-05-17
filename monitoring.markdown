@@ -74,7 +74,7 @@ In Duplex mode, RtAudio calls a single callback, but using other APIs you can ge
 Remark:   
 The audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
 
-Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called:
+Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called (in our main function):
 
 ```java
 	try
@@ -91,7 +91,7 @@ Now that everything's in place, it's time to test that out by starting our audio
 
 Ok! So, it's nice, we have our audio system running but we don't hear anything yet do we? Let's make a monitoring system in which we will hear back in our headphones what the mic is recording. For that, we just need to take all the data in the inputBuffer (the recording) and copy it in the outputBuffer (what we'll hear). There is an simple fonction that allows us to do so: memcpy. First you feed it with where you want to copy, then from where you want to copy, and last the size of what you want to copy.
 
-Through the power of memcpy, and with just an extra line in the callback function we can actually hear us singing through our headphones.
+Through the power of memcpy, and with just an extra line in the callback function we can actually hear us singing through our headphones (in our call back).
 
 ```java
     memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(short));

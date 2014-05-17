@@ -38,6 +38,7 @@ What we need to check everything is first to instantiate an RtAudio object, see 
 ```java
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 #include <math.h>
 
 #include <SFML/Window.hpp>
