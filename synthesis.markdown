@@ -57,45 +57,99 @@ Sound is periodic signal, based on a frequency that defines the pitch.
 
 Infinities of various formes are possible for synthesis, it's fun to play with different generations. The purest is the sinusoide, then among the big classics you have the saw, the triangle, the white noise and the favorite of cheap tune user: the square.
 
+Ready for some maths? Not much, just some. In the `sin` function the periodical behavior is underlined. For the next one, we'll need to define it. For instance, a square wave is just a function that periodicaly output 1 or -1. How do we define this period? Well, it depends of the sample rate and the frequency. A little calculus and we get: `int ratio = data->sampleRate/freq;`. Then we just need to alternate between two values.
+
 ```java
-//Triangle
-    if(_iS%ratio < 0.5 * ratio)
-        valNote += -1 + 4.0/ratio*(_iS%ratio);
+   int ratio = data->sampleRate/freq;
+// SQUARE
+    if(_iS%ratio > 0.5 * ratio)
+        val =  1;
     else
-		valNote +=  1 - 4.0/ratio*(_iS%ratio -ratio/2);
-	break;
+        val = -1;
+```
 
-case SIN:
-	valNote += 1.0*sin(2.0* M_PI / ratio * _iS);
-	break;
-case SAW:
-	valNote +=  1 - 2.0/ratio*(_iS%ratio);
-	break;
+If you want a triangle, then it's just a matter of putting lines instead of constant. How would you do that? A wild travel in the maths land and we get:
 
-case SQUARE:
-	if(_iS%ratio > 0.5 * ratio)
-		valNote +=  1;
-	else
-		valNote += -1;
-	break;
+```java
+   int ratio = data->sampleRate/freq;
+// TRIANGLE
+    if(_iS%ratio < 0.5 * ratio)
+        val = -1 + 4.0/ratio*(_iS%ratio);
+    else
+        val =  1 - 4.0/ratio*(_iS%ratio -ratio/2);
+```
 
-case WHITE_NOISE:
-		valNote += (float)rand() / (RAND_MAX) * 2 -1;
-			break;
+Last, here are two more synthetisers. Saw, some kind of half triangle. And white noise, just random values.
+
+```java
+   int ratio = data->sampleRate/freq;
+// SAW
+    val =  1 - 2.0/ratio*(_iS%ratio);
+
+// WHITE_NOISE
+    val = (float)rand() / (RAND_MAX) * 2 -1;
 ```
 
 Not only can you create varying signals by default, but you can always combine them. You can for instance add them:
 
 ```java
-valNote += 1.0*sin(2.0* M_PI / ratio * _iS) +  1 - 2.0/ratio*(_iS%ratio);
+   val  = 0;
+   val += 1.0*sin(2.0* M_PI / ratio * _iS);
+   val += 1 - 2.0/ratio*(_iS%ratio);
 ```
 
 ##Multiple tones##
+Okay now we're talking! Let's get deeeeep into the structure of the workshop. We defined different timber of sounds, but always the same frequency (i.e. the same pitch). We can change that by hard coding the 
 We need to have possibily multiple tones by synthetiser. For that we need a dynamic recording the notes we have, and a structure for those notes.
 
+First, we need a structure for each note that we will play.
+
 ```java
-...
+struct note {
+    float freq;
+    note(int _f) { freq = _f; }
+}
 ```
 
-##Envelope of sounde##
+Right now, we just have the frequency (the pitch) of the note, but more more will come later. Next, we need in our data object to add a vector of notes so we can play multiple ones `std::vector<note> listNotes = std::vector<note>();`.
 
+Now we need to be able to add notes. Why not using the keyboard for that and turning it into a real keyboard :D For that we need to add more keyPressed:
+
+```java
+// Key pressed
+    case sf::Event::KeyPressed:
+        switch (event.key.code)
+        {
+            case sf::Keyboard::Q: listNotes.push_back( note(261.626, data.iS) ); break;
+        } 
+    default;
+
+```
+
+Remark:  
+Of course, don't always add `case sf::Event::KeyPressed:`, just put your new keys logged in it.
+
+Now we can add maaaany new tunes. That's cool. But when we release the keys the sound doesn't go, and we go into madness. That's not what a nice workshop should be like. Let's tacke that issue.
+
+First let's create a fonction that seek and destroys tunes and add it to the data structure.
+
+```java
+    void releaseNotesByFreq( float _freq) {
+        for(int i=0; i<listNotes.size(); i++ )
+            if(listNotes.at(i).freq == _freq) {
+                listNotes.erase(listNotes.begin() + i);
+                break;
+            }
+    }
+```
+Then let's call it when keys are released:
+
+```java
+//Key released
+    case sf::Event::KeyReleased:
+        switch (event.key.code) {
+            case sf::Keyboard::Q:  data.releaseNotesByFreq(261.626); break;
+        }
+
+```
+And hell yeah, that's working :D Now the big question is, what are you still doing here? You shuld be touring already!

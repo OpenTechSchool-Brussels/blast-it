@@ -50,7 +50,7 @@ In case of an error occuring, RtAudio functions throw exceptions instead of retu
 	}
 ```
 
-In order for the callback to be called, we need to define it! The call back has already a structure for us. It takes in input references to the outputBuffer (what will be heard) and the inputBuffer (what we recorded), as well as the number of frames in those buffers, the stream time, a status variable and last but not least: our data object.
+In order for the callback to be called, we need to define it! The call back has already a structure for us. It takes in input references to the outputBuffer (what will be heard) and the inputBuffer (what we recorded), as well as the number of frames in those buffers, the stream time, a status variable and last but not least: our data object. This fonction is a global one, so you need to type it at the root of your code (before your main function).
 
 The 'ioCallback' function will hence be called every 512 samples. Since we've setup a 44100Hz stream, the function will be called every 1000 / (44100 / 512) = 0.0116 seconds (11.6 milliseconds). Let's check that by displaying the streamTime that's given by the callback function:
 
@@ -76,7 +76,7 @@ In Duplex mode, RtAudio calls a single callback, but using other APIs you can ge
 Remark:   
 The audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
 
-Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called:
+Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called (in our main function):
 
 ```java
 	try
@@ -94,7 +94,7 @@ Now that everything's in place, it's time to test that out by starting our audio
 
 Ok! So, it's nice, we have our audio system running but we don't hear anything yet do we? Let's make a monitoring system in which we will hear back in our headphones what the mic is recording. For that, we just need to take all the data in the inputBuffer (the recording) and copy it in the outputBuffer (what we'll hear). There is an simple fonction that allows us to do so: memcpy. First you feed it with where you want to copy, then from where you want to copy, and last the size of what you want to copy.
 
-Through the power of memcpy, and with just an extra line in the callback function we can actually hear us singing through our headphones.
+Through the power of memcpy, and with just an extra line in the callback function we can actually hear us singing through our headphones (in our call back).
 
 ```java
     memcpy(outputBuffer, inputBuffer, data->bufferFrames * data->channels * sizeof(short));
@@ -107,7 +107,7 @@ Every audio frame, we basically copy the input buffer to the output one, creatin
 Wouldn't it be nice to actually visualize the buffer that comes out? 
 
 For that, let's create a buffer that will hold a frame of audio so we can display it as lines over the screen.
-To do so, let's add a display buffer in our Data struct ` short* displayBuffer = NULL;` and then initialize it within the main function:
+To do so, let's add a display buffer in our Data struct ` short* displayBuffer = NULL;` and then initialize it within the main function. We first need to initialize it with the little sister of the `memcpy` function: `memset`. We feed this fonction with the buffer we want to feed, the value we want to use and the number of time we want it in the buffer:
 
 ```java
     data.displayBuffer = new short[data.bufferFrames * data.channels];
