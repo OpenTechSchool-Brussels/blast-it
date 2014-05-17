@@ -1,5 +1,5 @@
 ---
-title: Listen & Visualize
+title: Listen & Visualize It
 layout: default
 num: 2
 ---
