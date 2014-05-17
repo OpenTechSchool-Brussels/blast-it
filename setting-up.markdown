@@ -18,15 +18,15 @@ Let's first setup our battle station.
 Lucky Molly, Rtaudio is a breeze to install and use. SFML, depending on your system, not so much. Setting up instructions are a tad of a mess or now, but we're here to help you around if you need help.
 
 ####RtAudio####
-Let's start with the audio part:  
-* first download it: [RtAudio files](https://www.music.mcgill.ca/~gary/rtaudio/) (one .h and one .cpp file)  
+Let's start with the audio part: 
+* first download it: [RtAudio files](https://www.music.mcgill.ca/~gary/rtaudio/) (one .h and one .cpp file) 
 * then here is how to use it: [Link with RtAudio](https://www.music.mcgill.ca/~gary/rtaudio/compiling.html)
 
 If you're using windows Visual Studio, you just need to add the header files and don't forget to add a link to dsound.lib.
 
 ####SFML####
-And now for the visual part:  
-* Installation of SFML : [SFML library](http://www.sfml-dev.org/tutorials/2.1/#getting-started)  
+And now for the visual part: 
+* Installation of SFML : [SFML library](http://www.sfml-dev.org/tutorials/2.1/#getting-started) 
 * If needed, [Download Page](http://www.sfml-dev.org/download/sfml/2.1/)
 
 ##Base Code##
@@ -48,12 +48,12 @@ What we need to check everything is first to instantiate an RtAudio object, see 
 int main (int argc, char** argv)
 {
     // create the RtAudio object
-	RtAudio adac;
-	if (adac.getDeviceCount() < 1)
+    RtAudio adac;
+    if (adac.getDeviceCount() < 1)
     {
-		std::cout << "\nNo audio devices found!\n" << std::endl;
-		return EXIT_FAILURE;
-	}
+        std::cout << "\nNo audio devices found!\n" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // create a window
     sf::RenderWindow window(sf::VideoMode(640, 480), "Blast it!", sf::Style::Default);
@@ -73,12 +73,12 @@ int main (int argc, char** argv)
                 case sf::Event::Closed:
                     window.close();
                     break;
-            
+           
                 // Resize event: adjust the viewport
                 case sf::Event::Resized:
                     window.setView(sf::View(sf::FloatRect(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
                     break;
-                    
+                   
                 // Key pressed
                 case sf::Event::KeyPressed:
                     switch (event.key.code)
@@ -104,17 +104,17 @@ Now we're on the right track :D
 
 ###Sound###
 
-Sound is basically physical vibrations, waves travelling in the air. It can be modelised as an analog signal and hence be computer understandable. An analog signal is just a value that change over time, you'll have many occasions to see them during the workshop and you'll learn to recognise and love them (but not in public please). This value changing over time defines two important parameters. First you have the amplitude (how high is that value) and second you have its evolution over time.
+Sound is basically physical vibrations, waves travelling in the air. It can be modelised as an analogue signal and hence be computer understandable. An analogue signal is just a value that change over time, you'll have many occasions to see them during the workshop and you'll learn to recognise and love them (but not in public please). This value changing over time defines two important parameters. First you have the amplitude (how high is that value) and second you have its evolution over time.
 
-Alas, computers understand signals, but not analog ones. They are cold hearted machines (as much as your next human) that only process discreet values. For that they need to convert this analog signal to a digital one. Once done, it can read, record & manipulate it. When it needs to output it (headphones, speakers...) it then converts the digital back to analog. Instead of having a smooth curve for the signal, we'll have some very dense histograms (discret values). But how discret do we want them?
+Alas, computers understand signals, but not analogue ones. They are cold hearted machines (as much as your next human) that only process discreet values. For that they need to convert this analogue signal to a digital one. Once done, it can read, record & manipulate it. When it needs to output it (headphones, speakers...) it then converts the digital back to analogue. Instead of having a smooth curve for the signal, we'll have some very dense histograms (discrete values). But how discrete do we want them?
 
-You can imagine that the denser the histogram, the closer it is to the curve. The frequency of sampling this curve is called the sample rate (a classic is 44100Hz) and is one of the two parametrs that defines the quality of a sample, how true it is to its analog older brother. This sampling deals with time and frequency. If you remember well, our variable defining the analog signal was also defined by another parametre: the amplitude. In this case too, we can have a more or less precise definition of the amplitude given by the sample size (ex: 8, 16 or 24 bit). You will get to use and play with both parametrs along th line.
+You can imagine that the denser the histogram, the closer it is to the curve. The frequency of sampling this curve is called the sample rate (a classic is 44100Hz) and is one of the two parameters that defines the quality of a sample, how true it is to its analogue older brother. This sampling deals with time and frequency. If you remember well, our variable defining the analogue signal was also defined by another parameter: the amplitude. In this case too, we can have a more or less precise definition of the amplitude given by the sample size (ex: 8, 16 or 24 bit). You will get to use and play with both parameters along the line.
 
 Last, we have two ears. So we don't listen in a monophonic way, we actually can locate where sound is coming from. This is why computers often don't output to one speaker, but to multiple ones (from mono to stereo, or even 5.1). This number of outputs is called the number of channel (in stereo, 2);
 
-Software-wise, the behavior is the same whatever the platform or hardware (from a microcontroller to a computer or a smartphone): a callback is called whenever the hardware needs data in or out. The frequency of the callback depends on the way you configure the audio stack for your program, especially the callback buffer size. The smaller the audio buffer the lower the latency. In that regard, all platforms aren’t equal, so this workshop we’ll work with 512 samples sized buffers, but don’t hesitate to experiment with different values and experiment the limits of what your system can do.
+Software-wise, the behaviour is the same whatever the platform or hardware (from a micro-controller to a computer or a smartphone): a callback is called whenever the hardware needs data in or out. The frequency of the callback depends on the way you configure the audio stack for your program, especially the callback buffer size. The smaller the audio buffer the lower the latency. In that regard, all platforms aren’t equal, so this workshop we’ll work with 512 samples sized buffers, but don’t hesitate to experiment with different values and experiment the limits of what your system can do.
 
-Remark: on Windows, ASIO drivers usually offer way better latency than standard DirectSound ones in case your audio hardware is compatible. RtAudio, the audio framework we’ll use in this workshop both support DirectSound and ASIO. 
+Remark: on Windows, ASIO drivers usually offer way better latency than standard DirectSound ones in case your audio hardware is compatible. RtAudio, the audio framework we’ll use in this workshop both support DirectSound and ASIO.
 
 ###Audio Buffer###
 
@@ -124,4 +124,5 @@ In our configuration an audio channel length is 16bit x 2 channels for a total o
 We chose Interleaved format so Left and Right channels are arranged successively in the audio buffer:
 [ interleaved illustration: L R L R L R L R etc ]
 In order to easily access the individual channels we’ll represent audio buffers as `short* buffer;` in the code.
+
 
