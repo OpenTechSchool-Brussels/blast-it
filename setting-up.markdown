@@ -99,6 +99,7 @@ int main (int argc, char** argv)
 Remark:  
 Your code must be in the same folder than the RtAudio.h file. If not, you just neet to give the correct path instead of `#include<RtAudio.h>`.  
 In linux, the line you need to compile is:
+
 ```bash
 g++ -Wall -D__LINUX_ALSA__ -o main main.cpp RtAudio.cpp -lasound -lpthread -lsfml-graphics -lsfml-window -lsfml-system
 ```
