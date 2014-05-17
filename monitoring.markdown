@@ -1,5 +1,5 @@
 ---
-title: Listen & Visualize
+title: Listen & Visualize It
 layout: default
 num: 2
 ---
@@ -19,6 +19,7 @@ struct Data
     // audio
     unsigned char channels = 2;
     unsigned int sampleRate = 44100;
+    RtAudioFormat sampleFormat = RTAUDIO_SINT16;    
     unsigned int bufferFrames = 512;
 };
 ```
@@ -47,7 +48,7 @@ Now we can open an audio stream by using the different values we've just setup:
 ```java
 	try
 	{
-		adac.openStream( &oParams, &iParams, RTAUDIO_SINT16, data.sampleRate, &data.bufferFrames, &ioCallback, (void*)&data);
+		adac.openStream( &oParams, &iParams, data.sampleFormat, data.sampleRate, &data.bufferFrames, &ioCallback, (void*)&data);
 	}
 	catch (RtAudioError& e)
 	{

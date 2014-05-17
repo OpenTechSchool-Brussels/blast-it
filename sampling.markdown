@@ -143,8 +143,44 @@ First, make sure to fill the mixing buffer with zeros at the very beginning of t
 
 Note that we use sizeof(int) instead of sizeof(short);
 
-Then, we'll replace the memcpy calls we made for monitoring and playing back by for loops in which we will add our short* buffer values in the mixing bugger
+Then, we'll replace the memcpy calls we made for monitoring and playing back by for loops in which we will add our short* buffer values in the mixing buffer:
 
+
+```java
+        // mix sampling buffer
+        for (int i=0; i<data->bufferFrames * data->channels; i++)
+        {
+            data->mixingBuffer[i] += 0.9 * buffer[i];
+        }
+```
+
+```java
+        // mix monitoring buffer
+        for (int i=0; i<data->bufferFrames * data->channels; i++)
+        {
+            data->mixingBuffer[i] += 0.9 * ((short*)inputBuffer)[i];
+        }
+```
+
+All we need to do now is to transfer the values from our mixing buffer to the outputBuffer.  
+The idea is to clip the sample values back to 16bit range.  
+To do so let's add some C macros right after the includes:  
+
+```java
+#define MAX(x,y) (((x)>(y))?(x):(y))
+#define MIN(x,y) (((x)>(y))?(y):(x))
+#define CLIP(v,min,max) MAX((min),MIN((max),(v)));
+```
+
+Finally we can put the clipping loop right before the displayBuffer code:
+
+```java
+    // render the mixing buffer on the output
+    for (int i=0; i<data->bufferFrames * data->channels; i++)
+    {
+        ((short*)outputBuffer)[i] = CLIP(data->mixingBuffer[i], -32767, 32767);
+    }
+```
 
 
 
