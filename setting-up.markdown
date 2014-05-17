@@ -18,15 +18,15 @@ Let's first setup our battle station.
 Lucky Molly, Rtaudio is a breeze to install and use. SFML, depending on your system, not so much. Setting up instructions are a tad of a mess or now, but we're here to help you around if you need help.
 
 ####RtAudio####
-Let's start with the audio part:
-* first download it: [RtAudio files](https://www.music.mcgill.ca/~gary/rtaudio/) (one .h and one .cpp file)
+Let's start with the audio part:  
+* first download it: [RtAudio files](https://www.music.mcgill.ca/~gary/rtaudio/) (one .h and one .cpp file)  
 * then here is how to use it: [Link with RtAudio](https://www.music.mcgill.ca/~gary/rtaudio/compiling.html)
 
 If you're using windows Visual Studio, you just need to add the header files and don't forget to add a link to dsound.lib.
 
 ####SFML####
-And now for the visual part:
-* Installation of SFML : [SFML library](http://www.sfml-dev.org/tutorials/2.1/#getting-started)
+And now for the visual part:  
+* Installation of SFML : [SFML library](http://www.sfml-dev.org/tutorials/2.1/#getting-started)  
 * If needed, [Download Page](http://www.sfml-dev.org/download/sfml/2.1/)
 
 ##Base Code##
