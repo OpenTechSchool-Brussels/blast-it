@@ -1,5 +1,5 @@
 ---
-title: Sampling
+title: Loop It
 layout: default
 num: 3
 ---
@@ -143,7 +143,8 @@ First, make sure to fill the mixing buffer with zeros at the very beginning of t
 
 Note that we use sizeof(int) instead of sizeof(short);
 
-Then,
+Then, we'll replace the memcpy calls we made for monitoring and playing back by for loops in which we will add our short* buffer values in the mixing bugger
+
 
 
 

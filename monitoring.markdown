@@ -1,10 +1,10 @@
 ---
-title: Monitoring
+title: Listen & Visualize
 layout: default
 num: 2
 ---
 
-###Init Audio Stream###
+##Audio Stream##
 
 For this workshop we’ll configure the audio system like this:
 frequency: 44100 Hz
