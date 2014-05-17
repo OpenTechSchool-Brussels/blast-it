@@ -55,13 +55,13 @@ Sound is periodic signal, based on a frequency that defines the pitch.
 
 ##Form of the tone##
 
-Infinities of various formes for synthesis, based on varying timbers. Purest is the sinusoide, then among the big classics you have the saw, the triangle, the white noise and the favorite of cheap tune user: the square.
+Infinities of various formes are possible for synthesis, it's fun to play with different generations. The purest is the sinusoide, then among the big classics you have the saw, the triangle, the white noise and the favorite of cheap tune user: the square.
 
 ```java
-case TRI:
-	if(_iS%ratio < 0.5 * ratio)
-		valNote += -1 + 4.0/ratio*(_iS%ratio);
-	else
+//Triangle
+    if(_iS%ratio < 0.5 * ratio)
+        valNote += -1 + 4.0/ratio*(_iS%ratio);
+    else
 		valNote +=  1 - 4.0/ratio*(_iS%ratio -ratio/2);
 	break;
 

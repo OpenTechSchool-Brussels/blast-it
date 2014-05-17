@@ -100,7 +100,7 @@ Remark:
 Your code must be in the same folder than the RtAudio.h file. If not, you just neet to give the correct path instead of `#include<RtAudio.h>`.  
 In linux, the line you need to compile is:
 ```bash
-g++ -Wall -D__LINUX_ALSA__ -o main main.cpp ./rtaudio/RtAudio.cpp -lasound -lpthread -lsfml-graphics -lsfml-window -lsfml-system
+g++ -Wall -D__LINUX_ALSA__ -o main main.cpp RtAudio.cpp -lasound -lpthread -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 It's not super important to get the in & out of this code, just have a global grasp over it. If you're more curious about this aspect of the workshop, be sure to let us know.
