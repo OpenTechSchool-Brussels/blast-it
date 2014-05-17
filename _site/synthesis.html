@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Synthesis</title>
+        <base href="/" />
+        
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/monokai_sublime.css">
+        <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+
+        <script src="/js/highlight.pack.js"></script>
+        <script> hljs.configure({tabReplace: '    '}); hljs.initHighlightingOnLoad();</script>
+    </head>
+
+
+    <body>
+
+        <!-- Header -->
+        <div class="header">
+            <a class="ots" href="http://www.opentechschool.org">OpenTechSchool</a>
+            <a href="/" id="titleHeader"> Blast it, Create music with your sound card</a>
+        </div>
+      
+        <!-- Middle part -->
+        <div class="site">
+            <h1 class="title">Synthesis</h1>
+            <hr />
+
+	<!-- Left menu-->
+        <div class="aside">
+            <a href="/">Home</a>
+            <ul>
+                              
+                    <li><a href="/setting-up.html">log_1 Setting Up</a></li>
+                              
+                    <li><a href="/synthesis.html">log_2 Synthesis</a></li>
+                                      
+            </ul>
+
+            <a href="/about.html">About</a>
+            <p class="madeBy">
+                Course by  <a href="/about.html#Roman"> Roman </a>  &   <a href="/about.html#Pierre"> Pierre </a>   for <a href="http://www.opentechschool.org/brussels/">OTS Brussels</a>
+            </p>
+        </div>
+
+	<!-- Contect of the page (from Markdown files) -->
+        <div class="main">
+            <p>Now it&#39;s getting serious, ex nihilo in your face. It&#39;s not anymore about smashing back some pre made sick tunes, it&#39;s about creating them   </p>
+
+<h2>Generating a simple tone</h2>
+
+<p>We add iS to data, as the global time reference. We need global time reference because we need continuity over the buffers.
+Sound is periodic signal, based on a frequency that defines the pitch.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nBufferFrames</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+<span class="o">{</span>
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">iS</span><span class="o">++;</span>
+    <span class="kt">float</span> <span class="n">freq</span> <span class="o">=</span> <span class="mi">440</span><span class="o">;</span>
+    <span class="kt">float</span> <span class="n">val</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">sin</span><span class="o">(</span><span class="mf">2.0</span><span class="o">*</span> <span class="n">M_PI</span> <span class="o">/</span> <span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">sampleRate</span> <span class="o">/</span> <span class="n">freq</span><span class="o">)</span>  <span class="o">*</span> <span class="n">_iS</span><span class="o">);</span>
+    <span class="o">((</span><span class="kt">short</span><span class="o">*)</span><span class="n">outputBuffer</span><span class="o">)[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="n">CLIP</span><span class="o">(</span> <span class="n">val</span> <span class="o">*</span> <span class="mi">32767</span><span class="o">,</span> <span class="o">-</span><span class="mi">32767</span><span class="o">,</span> <span class="mi">32767</span><span class="o">);</span>
+    <span class="o">((</span><span class="kt">short</span><span class="o">*)</span><span class="n">outputBuffer</span><span class="o">)[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">((</span><span class="kt">short</span><span class="o">*)</span><span class="n">outputBuffer</span><span class="o">)[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">0</span><span class="o">];</span> 
+<span class="o">}</span>
+</code></pre></div>
+<p>Once we better structure what a synth and a note is, we&#39;ll trigger that by keyboard</p>
+
+<h2>Form of the tone</h2>
+
+<p>Infinities of various formes for synthesis, based on varying timbers. Purest is the sinusoide, then among the big classics you have the saw, the triangle, the white noise and the favorite of cheap tune user: the square.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="k">case</span> <span class="nl">TRI:</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ratio</span><span class="o">)</span>
+        <span class="n">valNote</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.0</span><span class="o">/</span><span class="n">ratio</span><span class="o">*(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span><span class="o">);</span>
+    <span class="k">else</span>
+        <span class="n">valNote</span> <span class="o">+=</span>  <span class="mi">1</span> <span class="o">-</span> <span class="mf">4.0</span><span class="o">/</span><span class="n">ratio</span><span class="o">*(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span> <span class="o">-</span><span class="n">ratio</span><span class="o">/</span><span class="mi">2</span><span class="o">);</span>
+    <span class="k">break</span><span class="o">;</span>
+
+<span class="k">case</span> <span class="nl">SIN:</span>
+    <span class="n">valNote</span> <span class="o">+=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">sin</span><span class="o">(</span><span class="mf">2.0</span><span class="o">*</span> <span class="n">M_PI</span> <span class="o">/</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">_iS</span><span class="o">);</span>
+    <span class="k">break</span><span class="o">;</span>
+<span class="k">case</span> <span class="nl">SAW:</span>
+    <span class="n">valNote</span> <span class="o">+=</span>  <span class="mi">1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">/</span><span class="n">ratio</span><span class="o">*(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span><span class="o">);</span>
+    <span class="k">break</span><span class="o">;</span>
+
+<span class="k">case</span> <span class="nl">SQUARE:</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ratio</span><span class="o">)</span>
+        <span class="n">valNote</span> <span class="o">+=</span>  <span class="mi">1</span><span class="o">;</span>
+    <span class="k">else</span>
+        <span class="n">valNote</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+    <span class="k">break</span><span class="o">;</span>
+
+<span class="k">case</span> <span class="nl">WHITE_NOISE:</span>
+        <span class="n">valNote</span> <span class="o">+=</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span><span class="n">rand</span><span class="o">()</span> <span class="o">/</span> <span class="o">(</span><span class="n">RAND_MAX</span><span class="o">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+            <span class="k">break</span><span class="o">;</span>
+</code></pre></div>
+<p>Not only can you create varying signals by default, but you can always combine them. You can for instance add them:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">valNote</span> <span class="o">+=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">sin</span><span class="o">(</span><span class="mf">2.0</span><span class="o">*</span> <span class="n">M_PI</span> <span class="o">/</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">_iS</span><span class="o">)</span> <span class="o">+</span>  <span class="mi">1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">/</span><span class="n">ratio</span><span class="o">*(</span><span class="n">_iS</span><span class="o">%</span><span class="n">ratio</span><span class="o">);</span>
+</code></pre></div>
+<h2>Multiple tones</h2>
+
+<p>We need to have possibily multiple tones by synthetiser. For that we need a dynamic recording the notes we have, and a structure for those notes.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="o">...</span>
+</code></pre></div>
+<h2>Envelope of sounde</h2>
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+          <p>©  <a href="/about.html#Roman">Roman Miletitch, </a>  <a href="/about.html#Pierre">Pierre Guilly, </a>  <a href="http://www.opentechschool.org">OpenTechSchool</a> || Licensed under <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>
+          </p>
+      </div>
+
+  </body>
+
+</html>

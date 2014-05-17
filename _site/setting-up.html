@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Setting Up</title>
+        <base href="/" />
+        
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/monokai_sublime.css">
+        <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+
+        <script src="/js/highlight.pack.js"></script>
+        <script> hljs.configure({tabReplace: '    '}); hljs.initHighlightingOnLoad();</script>
+    </head>
+
+
+    <body>
+
+        <!-- Header -->
+        <div class="header">
+            <a class="ots" href="http://www.opentechschool.org">OpenTechSchool</a>
+            <a href="/" id="titleHeader"> Blast it, Create music with your sound card</a>
+        </div>
+      
+        <!-- Middle part -->
+        <div class="site">
+            <h1 class="title">Setting Up</h1>
+            <hr />
+
+	<!-- Left menu-->
+        <div class="aside">
+            <a href="/">Home</a>
+            <ul>
+                              
+                    <li><a href="/setting-up.html">log_1 Setting Up</a></li>
+                              
+                    <li><a href="/synthesis.html">log_2 Synthesis</a></li>
+                                      
+            </ul>
+
+            <a href="/about.html">About</a>
+            <p class="madeBy">
+                Course by  <a href="/about.html#Roman"> Roman </a>  &   <a href="/about.html#Pierre"> Pierre </a>   for <a href="http://www.opentechschool.org/brussels/">OTS Brussels</a>
+            </p>
+        </div>
+
+	<!-- Contect of the page (from Markdown files) -->
+        <div class="main">
+            <p><a href="http://proteinderklang.com/Credits/PierreGuilluy.html">Pierre Guilluy</a></p>
+
+<h2>Base Code</h2>
+
+<p>Here&#39;s the base code you can copy and paste in main.cpp, compile and run to make sure both RtAudio and SFML run fine on your system.
+This code first makes sure RtAudio is functionnal, then creates a window and runs an event loop using SFML.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">iostream</span><span class="o">&gt;</span>
+
+<span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">SFML</span><span class="o">/</span><span class="n">Window</span><span class="o">.</span><span class="na">hpp</span><span class="o">&gt;</span>
+<span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">SFML</span><span class="o">/</span><span class="n">Graphics</span><span class="o">.</span><span class="na">hpp</span><span class="o">&gt;</span>
+
+<span class="err">#</span><span class="n">include</span> <span class="s">&quot;RtAudio.h&quot;</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="o">(</span><span class="kt">int</span> <span class="n">argc</span><span class="o">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="c1">// create the RtAudio object</span>
+    <span class="n">RtAudio</span> <span class="n">adac</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">adac</span><span class="o">.</span><span class="na">getDeviceCount</span><span class="o">()</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="nl">std:</span><span class="o">:</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;\nNo audio devices found!\n&quot;</span> <span class="o">&lt;&lt;</span> <span class="nl">std:</span><span class="o">:</span><span class="n">endl</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// create a window</span>
+    <span class="nl">sf:</span><span class="o">:</span><span class="n">RenderWindow</span> <span class="n">window</span><span class="o">(</span><span class="nl">sf:</span><span class="o">:</span><span class="n">VideoMode</span><span class="o">(</span><span class="mi">640</span><span class="o">,</span> <span class="mi">480</span><span class="o">),</span> <span class="s">&quot;Blast it!&quot;</span><span class="o">,</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Style:</span><span class="o">:</span><span class="n">Default</span><span class="o">);</span>
+    <span class="n">window</span><span class="o">.</span><span class="na">setActive</span><span class="o">();</span>
+    <span class="n">window</span><span class="o">.</span><span class="na">setKeyRepeatEnabled</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+
+    <span class="c1">// main loop</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">window</span><span class="o">.</span><span class="na">isOpen</span><span class="o">())</span>
+    <span class="o">{</span>
+        <span class="c1">// handle events</span>
+        <span class="nl">sf:</span><span class="o">:</span><span class="n">Event</span> <span class="n">event</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">window</span><span class="o">.</span><span class="na">pollEvent</span><span class="o">(</span><span class="n">event</span><span class="o">))</span>
+        <span class="o">{</span>
+            <span class="k">switch</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">type</span><span class="o">)</span>
+            <span class="o">{</span>
+                <span class="c1">// Close window: exit</span>
+                <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Event:</span><span class="o">:</span><span class="nl">Closed:</span>
+                    <span class="n">window</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+                    <span class="k">break</span><span class="o">;</span>
+
+                <span class="c1">// Resize event: adjust the viewport</span>
+                <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Event:</span><span class="o">:</span><span class="nl">Resized:</span>
+                    <span class="n">window</span><span class="o">.</span><span class="na">setView</span><span class="o">(</span><span class="nl">sf:</span><span class="o">:</span><span class="n">View</span><span class="o">(</span><span class="nl">sf:</span><span class="o">:</span><span class="n">FloatRect</span><span class="o">(</span><span class="mi">0</span><span class="o">.</span><span class="na">f</span><span class="o">,</span> <span class="mi">0</span><span class="o">.</span><span class="na">f</span><span class="o">,</span> <span class="n">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;(</span><span class="n">event</span><span class="o">.</span><span class="na">size</span><span class="o">.</span><span class="na">width</span><span class="o">),</span> <span class="n">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;(</span><span class="n">event</span><span class="o">.</span><span class="na">size</span><span class="o">.</span><span class="na">height</span><span class="o">))));</span>
+                    <span class="k">break</span><span class="o">;</span>
+
+                <span class="c1">// Key pressed</span>
+                <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Event:</span><span class="o">:</span><span class="nl">KeyPressed:</span>
+                    <span class="k">switch</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">key</span><span class="o">.</span><span class="na">code</span><span class="o">)</span>
+                    <span class="o">{</span>
+                        <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Keyboard:</span><span class="o">:</span><span class="nl">Escape:</span>
+                            <span class="n">window</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+                            <span class="k">break</span><span class="o">;</span>
+                    <span class="o">}</span>
+                    <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+<h2>Digital Audio</h2>
+
+<h3>Sound</h3>
+
+<p>Sound is basically waves travelling in the air, an analog signal. 
+Computer-based audio hardware converts this signal to digital in order to be stored or treated by software, and converts the digital back to analog to be able to output it to a pair of headphones or speakers.</p>
+
+<p>A digital audio signal is defined by a sample rate (ex: 44100Hz or samples / second) and a sample size (ex: 8, 16, 24bit) and a number of channels per sample (ex: mono, stereo, 5.1).</p>
+
+<p>Software-wise, the behavior is the same whatever the platform or hardware (from a microcontroller to a computer or a smartphone): a callback is called whenever the hardware needs data in or out. The frequency of the callback depends on the way you configure the audio stack for your program, especially the callback buffer size. The smaller the audio buffer the lower the latency. In that regard, all platforms aren’t equal, so this workshop we’ll work with 512 samples sized buffers, but don’t hesitate to experiment with different values and experiment the limits of what your system can do.</p>
+
+<p>Remark: on Windows, ASIO drivers usually offer way better latency than standard DirectSound ones in case your audio hardware is compatible. RtAudio, the audio framework we’ll use in this workshop both support DirectSound and ASIO. </p>
+
+<h3>Audio Buffer</h3>
+
+<p>An audio sample is a set of values that correspond to the different audio channels.
+In our configuration an audio channel length is 16bit x 2 channels for a total of 32bit / sample.</p>
+
+<p>We chose Interleaved format so Left and Right channels are arranged successively in the audio buffer:
+[ interleaved illustration: L R L R L R L R etc ]
+In order to easily access the individual channels we’ll represent audio buffers as short* buffer; in the code.
+Therefor, to allocate a 512-sample-long stereo buffer we’ll do:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kt">short</span><span class="o">*</span> <span class="n">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">short</span><span class="o">[</span><span class="mi">512</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="o">];</span>
+</code></pre></div>
+<h3>Init Audio Stream</h3>
+
+<p>For this workshop we’ll configure the audio system like this:
+frequency: 44100 Hz
+2 channels (stereo) interleaved
+512 samples audio buffer</p>
+
+<p>Let’s create a global &quot;Data&quot; structure that will hold with those information:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">struct</span> <span class="n">Data</span>
+<span class="o">{</span>
+    <span class="c1">// audio</span>
+    <span class="n">unsigned</span> <span class="kt">char</span> <span class="n">channels</span> <span class="o">=</span> <span class="mi">2</span><span class="o">;</span>
+    <span class="n">unsigned</span> <span class="kt">int</span> <span class="n">sampleRate</span> <span class="o">=</span> <span class="mi">44100</span><span class="o">;</span>
+    <span class="n">unsigned</span> <span class="kt">int</span> <span class="n">bufferFrames</span> <span class="o">=</span> <span class="mi">512</span><span class="o">;</span>
+<span class="o">};</span>
+</code></pre></div>
+<p>Create an object of type Data at the very beginning of the main function:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="n">Data</span> <span class="n">data</span><span class="o">;</span>
+</code></pre></div>
+<p>Using both input and output, we will use RtAudio in duplex mode.
+RtAudio therefor requires a RtAudio::StreamParameters object for both input and output devices:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="nl">RtAudio:</span><span class="o">:</span><span class="n">StreamParameters</span> <span class="n">iParams</span><span class="o">,</span> <span class="n">oParams</span><span class="o">;</span>
+    <span class="n">iParams</span><span class="o">.</span><span class="na">deviceId</span> <span class="o">=</span> <span class="n">adac</span><span class="o">.</span><span class="na">getDefaultInputDevice</span><span class="o">();</span>
+    <span class="n">iParams</span><span class="o">.</span><span class="na">nChannels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span><span class="o">;</span>
+    <span class="n">iParams</span><span class="o">.</span><span class="na">firstChannel</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="n">oParams</span><span class="o">.</span><span class="na">deviceId</span> <span class="o">=</span> <span class="n">adac</span><span class="o">.</span><span class="na">getDefaultOutputDevice</span><span class="o">();</span>
+    <span class="n">oParams</span><span class="o">.</span><span class="na">nChannels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span><span class="o">;</span>
+    <span class="n">oParams</span><span class="o">.</span><span class="na">firstChannel</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</code></pre></div>
+<p>Now we can open an audio stream by using the different values we&#39;ve just setup:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="k">try</span>
+    <span class="o">{</span>
+        <span class="n">adac</span><span class="o">.</span><span class="na">openStream</span><span class="o">(</span> <span class="o">&amp;</span><span class="n">oParams</span><span class="o">,</span> <span class="o">&amp;</span><span class="n">iParams</span><span class="o">,</span> <span class="n">RTAUDIO_SINT16</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">sampleRate</span><span class="o">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span><span class="o">,</span> <span class="o">&amp;</span><span class="n">ioCallback</span><span class="o">,</span> <span class="o">(</span><span class="kt">void</span><span class="o">*)&amp;</span><span class="n">data</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">catch</span> <span class="o">(</span><span class="n">RtAudioError</span><span class="o">&amp;</span> <span class="n">e</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="nl">std:</span><span class="o">:</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">()</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span> <span class="o">&lt;&lt;</span> <span class="nl">std:</span><span class="o">:</span><span class="n">endl</span><span class="o">;</span>
+        <span class="n">exit</span><span class="o">(</span> <span class="mi">1</span> <span class="o">);</span>
+    <span class="o">}</span>
+</code></pre></div>
+<p>Remark:
+Note that in case of an error occuring, RtAudio functions throw exceptions instead or return an error code.</p>
+
+<p>Before starting the stream, we need to create an &#39;ioCallback&#39; function that will be called every 512 samples. 
+Since we&#39;ve setup a 44100Hz stream, the function will be called every 1000 / (44100 / 512) = 0.0116 seconds (11.6 milliseconds).
+We will check that by displaying the streamTime that&#39;s given by the callback function:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">int ioCallback (void *outputBuffer,
+                void *inputBuffer,
+                unsigned int nBufferFrames,
+                double streamTime,
+                RtAudioStreamStatus status,
+                void *userData)
+{
+    std::cout &lt;&lt; streamTime &lt;&lt; std::endl;
+}
+</code></pre></div>
+<p>Remark: in Duplex mode, RtAudio calls a single callback, but using other APIs you can get an input callback + an output callback. </p>
+
+<p>Remark: the audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.</p>
+
+<p>Now that everything&#39;s in place, it&#39;s time to test that out by starting our audio stream and get our callback function called:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="k">try</span>
+    <span class="o">{</span>
+        <span class="n">adac</span><span class="o">.</span><span class="na">startStream</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">catch</span> <span class="o">(</span><span class="n">RtAudioError</span><span class="o">&amp;</span> <span class="n">e</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="nl">std:</span><span class="o">:</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">()</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span> <span class="o">&lt;&lt;</span> <span class="nl">std:</span><span class="o">:</span><span class="n">endl</span><span class="o">;</span>
+    <span class="o">}</span>
+</code></pre></div>
+<p>To prevent our program from quitting directly, let&#39;s add a sleep call of 100 in the while loop:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="nl">sf:</span><span class="o">:</span><span class="n">sleep</span><span class="o">(</span><span class="nl">sf:</span><span class="o">:</span><span class="n">milliseconds</span><span class="o">(</span><span class="mi">10</span><span class="o">));</span>
+</code></pre></div>
+<h2>Monitoring</h2>
+
+<p>Ok! So, it&#39;s nice, we have our audio system running but we don&#39;t hear anything yet do we?
+With an extra line in the callback function we can actually hear us singing through our headphones.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="n">memcpy</span><span class="o">(</span><span class="n">outputBuffer</span><span class="o">,</span> <span class="n">inputBuffer</span><span class="o">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">int</span><span class="o">));</span>
+</code></pre></div>
+<p>Every audio frame, we basically copy the input buffer to the output one, creating kind of an audio monitoring system.</p>
+
+<h2>Visualization</h2>
+
+<p>Wouldn&#39;t it be nice to actually visualize the buffer that comes out? </p>
+
+<p>The we will create a buffer that will hold a frame of audio so we can display it as lines.
+To do so, let&#39;s add an display buffer in our Data struct.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="kt">short</span><span class="o">*</span> <span class="n">displayBuffer</span> <span class="o">=</span> <span class="n">NULL</span><span class="o">;</span>
+</code></pre></div>
+<p>... then initialize it with in the main function:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="n">data</span><span class="o">.</span><span class="na">displayBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">short</span><span class="o">[</span><span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span><span class="o">];</span>
+    <span class="n">memset</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">displayBuffer</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">short</span><span class="o">));</span>
+</code></pre></div>
+<p>We need to update the buffer every audio frame, we&#39;ll add the following line at the end of the audio callback:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">displayBuffer</span><span class="o">)</span>
+        <span class="n">memcpy</span><span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">displayBuffer</span><span class="o">,</span> <span class="o">(</span><span class="kt">short</span><span class="o">*)</span><span class="n">outputBuffer</span><span class="o">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">short</span><span class="o">));</span>
+</code></pre></div>
+<p>Finally we&#39;ll put the actual drawing code at the end of the main loop.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">        <span class="nl">sf:</span><span class="o">:</span><span class="n">VertexArray</span> <span class="n">lines</span><span class="o">(</span><span class="nl">sf:</span><span class="o">:</span><span class="n">LinesStrip</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span><span class="o">);</span>
+        <span class="kt">int</span> <span class="n">yOffset</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="na">getSize</span><span class="o">().</span><span class="na">y</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">yScale</span> <span class="o">=</span> <span class="mi">65535</span> <span class="o">/</span> <span class="n">window</span><span class="o">.</span><span class="na">getSize</span><span class="o">().</span><span class="na">y</span> <span class="o">*</span> <span class="mf">1.1</span><span class="o">;</span>
+        <span class="kt">float</span> <span class="n">xStep</span> <span class="o">=</span> <span class="o">(</span><span class="kt">float</span><span class="o">)</span><span class="n">window</span><span class="o">.</span><span class="na">getSize</span><span class="o">().</span><span class="na">x</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+             <span class="n">i</span> <span class="o">&lt;</span> <span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span><span class="o">;</span>
+             <span class="n">i</span><span class="o">++)</span>
+        <span class="o">{</span>
+            <span class="n">lines</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">position</span> <span class="o">=</span> <span class="nl">sf:</span><span class="o">:</span><span class="n">Vector2f</span><span class="o">(</span><span class="n">xStep</span> <span class="o">*</span> <span class="n">i</span><span class="o">,</span> <span class="n">yOffset</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="na">displayBuffer</span><span class="o">[</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">]</span> <span class="o">/</span> <span class="n">yScale</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">window</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+        <span class="n">window</span><span class="o">.</span><span class="na">draw</span><span class="o">(</span><span class="n">lines</span><span class="o">);</span>
+        <span class="n">window</span><span class="o">.</span><span class="na">display</span><span class="o">();</span>
+</code></pre></div>
+<p>We basically draw a series of lines joining the samples of the audio buffer continuously, the values being centered along the horizontal axis of the window.</p>
+
+<h2>Sampling</h2>
+
+<p>We now can hear and watch audio, but let&#39;s do something a bit more fun.
+We will create a loop station, similar to the looping pedal beatboxers use.</p>
+
+<p>Let&#39;s add a few members to the Data struct:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="c1">// sampling</span>
+    <span class="n">bool</span> <span class="n">playing</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="n">bool</span> <span class="n">recording</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="kt">short</span><span class="o">*</span> <span class="n">samplingBuffer</span> <span class="o">=</span> <span class="n">NULL</span><span class="o">;</span>
+    <span class="n">unsigned</span> <span class="kt">int</span> <span class="n">samplingBufferMaxFrames</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="n">unsigned</span> <span class="kt">int</span> <span class="n">samplingBufferCurrentFrames</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="n">unsigned</span> <span class="kt">int</span> <span class="n">playbackCursor</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</code></pre></div>
+<p>We initialize the buffer so it can hold about 5 seconds of audio.
+For conveniency we make sure the buffer has a number of samples that&#39;s a multiple of data.bufferFrames (= 512).</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="c1">// init the sampling data</span>
+    <span class="kt">char</span> <span class="n">maxSeconds</span> <span class="o">=</span> <span class="mi">5</span><span class="o">;</span>
+    <span class="n">data</span><span class="o">.</span><span class="na">samplingBufferMaxFrames</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">sampleRate</span> <span class="o">*</span> <span class="n">maxSeconds</span><span class="o">;</span>
+    <span class="n">data</span><span class="o">.</span><span class="na">samplingBufferMaxFrames</span> <span class="o">-=</span> <span class="n">data</span><span class="o">.</span><span class="na">samplingBufferMaxFrames</span> <span class="o">%</span> <span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span><span class="o">;</span>
+    <span class="n">data</span><span class="o">.</span><span class="na">samplingBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">short</span><span class="o">[</span><span class="n">data</span><span class="o">.</span><span class="na">samplingBufferMaxFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span><span class="o">];</span>
+</code></pre></div>
+<h3>Recording</h3>
+
+<p>In the audio callback we will copy the successive audio-input buffers to the sampling buffer, until the user stops it or when its full.
+We keep track of the number of recorded frames in data-&gt;samplingBufferCurrentFrames.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="c1">// recording</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">recording</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="c1">// record samples</span>
+        <span class="kt">short</span><span class="o">*</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBuffer</span> <span class="o">+</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferCurrentFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span><span class="o">;</span>
+        <span class="n">memcpy</span><span class="o">((</span><span class="kt">void</span><span class="o">*)</span><span class="n">buffer</span><span class="o">,</span> <span class="n">inputBuffer</span><span class="o">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">short</span><span class="o">));</span>
+        <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferCurrentFrames</span> <span class="o">+=</span> <span class="n">nBufferFrames</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferCurrentFrames</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferMaxFrames</span><span class="o">)</span>
+        <span class="o">{</span>
+            <span class="n">data</span><span class="o">-&gt;</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="n">data</span><span class="o">-&gt;</span><span class="n">playing</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div>
+<h3>Playback</h3>
+
+<p>When playing back we go the other way around, we increment the playback cursor and copy the right number of audio frames to the output buffer. 
+In this case we use samplingBufferCurrentFrames as the maximum frame we can play until we have to loop the cursor back to the beginning.
+We do so by using the modulo (%) operator which is perfect for looping.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">playing</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferCurrentFrames</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="c1">// play the sampling buffer in loop</span>
+        <span class="kt">short</span><span class="o">*</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBuffer</span> <span class="o">+</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">playbackCursor</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span><span class="o">;</span>
+        <span class="n">data</span><span class="o">-&gt;</span><span class="n">playbackCursor</span> <span class="o">+=</span> <span class="n">nBufferFrames</span><span class="o">;</span>
+        <span class="n">data</span><span class="o">-&gt;</span><span class="n">playbackCursor</span> <span class="o">%=</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">samplingBufferCurrentFrames</span><span class="o">;</span>
+        <span class="n">memcpy</span><span class="o">(</span><span class="n">outputBuffer</span><span class="o">,</span> <span class="n">buffer</span><span class="o">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">short</span><span class="o">));</span>
+    <span class="o">}</span>
+</code></pre></div>
+<p>Remark: 
+You may want to temporarily deactivate the monitoring to be able to listen to the audio playback.
+Don&#39;t worry, we will re-activate it a bit later.</p>
+
+<h3>Control</h3>
+
+<p>We miss a way to control the recording and playback at will.
+Let&#39;s go to the main function and handle two new key events.</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">                        <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Keyboard:</span><span class="o">:</span><span class="nl">Space:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="na">recording</span> <span class="o">=</span> <span class="o">!</span><span class="n">data</span><span class="o">.</span><span class="na">recording</span><span class="o">;</span>
+                            <span class="n">data</span><span class="o">.</span><span class="na">playing</span> <span class="o">=</span> <span class="o">!</span><span class="n">data</span><span class="o">.</span><span class="na">recording</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">recording</span><span class="o">)</span>
+                                <span class="n">data</span><span class="o">.</span><span class="na">samplingBufferCurrentFrames</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                            <span class="k">else</span>
+                                <span class="n">data</span><span class="o">.</span><span class="na">playbackCursor</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                            <span class="k">break</span><span class="o">;</span>
+
+                        <span class="k">case</span> <span class="nl">sf:</span><span class="o">:</span><span class="nl">Keyboard:</span><span class="o">:</span><span class="nl">Return:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="na">playing</span> <span class="o">=</span> <span class="o">!</span><span class="n">data</span><span class="o">.</span><span class="na">playing</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">playing</span><span class="o">)</span>
+                                <span class="n">data</span><span class="o">.</span><span class="na">playbackCursor</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                            <span class="k">break</span><span class="o">;</span>
+</code></pre></div>
+<p>You will record a new audio loop by pressing Space once to start and another time to stop.
+The playback will start immediately after the recording&#39;s finished.
+When you&#39;re bored of listening to the same loop over and over, you can either record a new one, or stop it by pressing the Return key - you can press it again to restart the loop.
+Note that we make sure the different cursors are reset before recording or playing back. </p>
+
+<p>Have fun:
+You can easily modify the playback algorithm to modify the speed of the playback, and control it using the mouse for example.</p>
+
+<h2>Mixing</h2>
+
+<p>At this point we can either monitor our audio input or use a loop station.
+Wouldn&#39;t it be nice if we could mix both, so we can sing on top of a beatbox loop for example?</p>
+
+<p>Like on a mixing table, we will combine several signals in a single one.
+In addition to that, each signal will have its own audio gain so we can control its weight in the mix.</p>
+
+<p>In digital audio, mixing signals is basically their values on top of each other.
+As you might think the process will quickly generate values that are greater that what&#39;s possible in 16bit.</p>
+
+<p>In order to prevent that from happening we will perform the mixing of the different signal values in an buffer of integers (32bit) that can hold much bigger values than a buffer of shorts (16bit).</p>
+
+<p>We will first add such a buffer in the Data structure</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="c1">// mixing</span>
+    <span class="kt">int</span><span class="o">*</span> <span class="n">mixingBuffer</span> <span class="o">=</span> <span class="n">NULL</span><span class="o">;</span>
+</code></pre></div>
+<p>and instanciate it with the same size as the others, the difference being that one value has twice the size of the previous buffers:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">data</span><span class="o">.</span><span class="na">mixingBuffer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">data</span><span class="o">.</span><span class="na">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="na">channels</span><span class="o">];</span>
+</code></pre></div>
+<p>Remark:
+Make sure to do so before starting the audio stream!</p>
+
+<p>The idea now is to reset the mixing buffer before adding values from different signal into it.</p>
+
+<p>First, make sure to fill the mixing buffer with zeros at the very beginning of the audio callback:</p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java">    <span class="n">memset</span><span class="o">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">mixingBuffer</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">bufferFrames</span> <span class="o">*</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">channels</span> <span class="o">*</span> <span class="n">sizeof</span><span class="o">(</span><span class="kt">int</span><span class="o">));</span>
+</code></pre></div>
+<p>Note that we use sizeof(int) instead of sizeof(short);</p>
+
+<p>Then,</p>
+
+<h2>Effect</h2>
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+          <p>©  <a href="/about.html#Roman">Roman Miletitch, </a>  <a href="/about.html#Pierre">Pierre Guilly, </a>  <a href="http://www.opentechschool.org">OpenTechSchool</a> || Licensed under <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>
+          </p>
+      </div>
+
+  </body>
+
+</html>
