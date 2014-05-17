@@ -1,7 +1,7 @@
 ---
 title: Sampling
 layout: default
-num: 1
+num: 3
 ---
 
 [Pierre Guilluy](http://proteinderklang.com/Credits/PierreGuilluy.html)

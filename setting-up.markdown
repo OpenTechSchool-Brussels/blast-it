@@ -1,5 +1,5 @@
 ---
-title: Sampling
+title: Setting Up
 layout: default
 num: 1
 ---
