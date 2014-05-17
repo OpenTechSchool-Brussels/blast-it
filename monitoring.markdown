@@ -105,7 +105,7 @@ Every audio frame, we basically copy the input buffer to the output one, creatin
 Wouldn't it be nice to actually visualize the buffer that comes out? 
 
 For that, let's create a buffer that will hold a frame of audio so we can display it as lines over the screen.
-To do so, let's add a display buffer in our Data struct ` short* displayBuffer = NULL;` and then initialize it within the main function:
+To do so, let's add a display buffer in our Data struct ` short* displayBuffer = NULL;` and then initialize it within the main function. We first need to initialize it with the little sister of the `memcpy` function: `memset`. We feed this fonction with the buffer we want to feed, the value we want to use and the number of time we want it in the buffer:
 
 ```java
     data.displayBuffer = new short[data.bufferFrames * data.channels];
