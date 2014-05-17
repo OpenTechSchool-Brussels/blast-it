@@ -96,6 +96,12 @@ int main (int argc, char** argv)
 }
 ```
 
+Remark:  
+In linux, the line you need to compile is:
+```bash
+g++ -Wall -D__LINUX_ALSA__ -o main main.cpp ./rtaudio/RtAudio.cpp -lasound -lpthread -lsfml-graphics -lsfml-window -lsfml-system
+```
+
 It's not super important to get the in & out of this code, just have a global grasp over it. If you're more curious about this aspect of the workshop, be sure to let us know.
 
 ##Digital Audio##
