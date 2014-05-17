@@ -101,8 +101,4 @@ In our configuration an audio channel length is 16bit x 2 channels for a total o
 We chose Interleaved format so Left and Right channels are arranged successively in the audio buffer:
 [ interleaved illustration: L R L R L R L R etc ]
 In order to easily access the individual channels we’ll represent audio buffers as short* buffer; in the code.
-Therefor, to allocate a 512-sample-long stereo buffer we’ll do:
 
-```java
-short* buffer = new short[512 * 2 * 2];
-```
