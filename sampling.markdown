@@ -189,5 +189,26 @@ At some point, if you're tired about listening through the ambiant noise through
 
 Before starting with the audio synthesis chapter, let's have fun and modify the values of our `mixingBuffer` before rendering it to the `outputBuffer`. 
 
-To do so we'll create a new function that will apply an effect directly on
+To do so we'll create a new function that will apply an effect directly on the mixing buffer.
+
+```java
+void applyCrusherEffect (int* buffer,
+                         unsigned int sampleCount,
+                         unsigned char channelCount,
+                         float param)
+{
+    unsigned char shift = 8 + param * 8;
+    for (int i=0;
+         i < sampleCount * channelCount;
+         i++)
+    {
+        int value = buffer[i];
+        value /= powf(2, shift);
+        value *= powf(2, shift);
+        buffer[i] = value;
+    }
+}
+```
+
+
 
