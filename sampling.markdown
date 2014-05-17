@@ -124,7 +124,7 @@ We will first add such a buffer in the Data structure
     int* mixingBuffer = NULL;
 ```
 
-and instanciate it with the same size as the others, the difference being that one value has twice the size of the previous buffers:
+and instantiate it with the same size as the others, the difference being that one value has twice the size of the previous buffers:
 
 ```java
 data.mixingBuffer = new int[data.bufferFrames * data.channels];
