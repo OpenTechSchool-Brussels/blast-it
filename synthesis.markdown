@@ -57,37 +57,45 @@ Sound is periodic signal, based on a frequency that defines the pitch.
 
 Infinities of various formes are possible for synthesis, it's fun to play with different generations. The purest is the sinusoide, then among the big classics you have the saw, the triangle, the white noise and the favorite of cheap tune user: the square.
 
+Ready for some maths? Not much, just some. In the `sin` function the periodical behavior is underlined. For the next one, we'll need to define it. For instance, a square wave is just a function that periodicaly output 1 or -1. How do we define this period? Well, it depends of the sample rate and the frequency. A little calculus and we get: `int ratio = data->sampleRate/freq;`. Then we just need to alternate between two values.
+
 ```java
-//Triangle
-    if(_iS%ratio < 0.5 * ratio)
-        valNote += -1 + 4.0/ratio*(_iS%ratio);
+   int ratio = data->sampleRate/freq;
+// SQUARE
+    if(_iS%ratio > 0.5 * ratio)
+        val =  1;
     else
-		valNote +=  1 - 4.0/ratio*(_iS%ratio -ratio/2);
-	break;
+        val = -1;
+```
 
-case SIN:
-	valNote += 1.0*sin(2.0* M_PI / ratio * _iS);
-	break;
-case SAW:
-	valNote +=  1 - 2.0/ratio*(_iS%ratio);
-	break;
+If you want a triangle, then it's just a matter of putting lines instead of constant. How would you do that? A wild travel in the maths land and we get:
 
-case SQUARE:
-	if(_iS%ratio > 0.5 * ratio)
-		valNote +=  1;
-	else
-		valNote += -1;
-	break;
+```java
+   int ratio = data->sampleRate/freq;
+// TRIANGLE
+    if(_iS%ratio < 0.5 * ratio)
+        val = -1 + 4.0/ratio*(_iS%ratio);
+    else
+        val =  1 - 4.0/ratio*(_iS%ratio -ratio/2);
+```
 
-case WHITE_NOISE:
-		valNote += (float)rand() / (RAND_MAX) * 2 -1;
-			break;
+Last, here are two more synthetisers. Saw, some kind of half triangle. And white noise, just random values.
+
+```java
+   int ratio = data->sampleRate/freq;
+// SAW
+    val =  1 - 2.0/ratio*(_iS%ratio);
+
+// WHITE_NOISE
+    val = (float)rand() / (RAND_MAX) * 2 -1;
 ```
 
 Not only can you create varying signals by default, but you can always combine them. You can for instance add them:
 
 ```java
-valNote += 1.0*sin(2.0* M_PI / ratio * _iS) +  1 - 2.0/ratio*(_iS%ratio);
+   val  = 0;
+   val += 1.0*sin(2.0* M_PI / ratio * _iS);
+   val += 1 - 2.0/ratio*(_iS%ratio);
 ```
 
 ##Multiple tones##
@@ -97,5 +105,5 @@ We need to have possibily multiple tones by synthetiser. For that we need a dyna
 ...
 ```
 
-##Envelope of sounde##
+##Envelope of sound##
 
