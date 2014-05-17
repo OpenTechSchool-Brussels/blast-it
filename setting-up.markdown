@@ -149,8 +149,10 @@ Now we can open an audio stream by using the different values we've just setup:
 	}
 ```
 
+We pass our Data object as the last argument "void* userData" so it will passed to the callback function.
+
 Remark:
-Note that in case of an error occuring, RtAudio functions throw exceptions instead or return an error code.
+In case of an error occuring, RtAudio functions throw exceptions instead of returning an error code.
 
 Before starting the stream, we need to create an 'ioCallback' function that will be called every 512 samples. 
 Since we've setup a 44100Hz stream, the function will be called every 1000 / (44100 / 512) = 0.0116 seconds (11.6 milliseconds).
@@ -165,13 +167,18 @@ int ioCallback (void *outputBuffer,
                 RtAudioStreamStatus status,
                 void *userData)
 {
+    Data* data = (Data*)userData;
     std::cout << streamTime << std::endl;
 }
 ```
 
-Remark: in Duplex mode, RtAudio calls a single callback, but using other APIs you can get an input callback + an output callback. 
+We got our Data object back from the callback userData.
 
-Remark: the audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
+Remark: 
+In Duplex mode, RtAudio calls a single callback, but using other APIs you can get an input callback + an output callback.
+
+Remark: 
+The audio callback doesn’t occur in the main thread, it’s an important information if you plan to share data with the audio engine.
 
 Now that everything's in place, it's time to test that out by starting our audio stream and get our callback function called:
 
@@ -184,12 +191,6 @@ Now that everything's in place, it's time to test that out by starting our audio
 	{
 		std::cout << '\n' << e.getMessage() << '\n' << std::endl;
 	}
-```
-
-To prevent our program from quitting directly, let's add a sleep call of 100 in the while loop:
-
-```java
-    sf::sleep(sf::milliseconds(10));
 ```
 
 ##Monitoring##
