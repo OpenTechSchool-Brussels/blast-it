@@ -99,11 +99,120 @@ Not only can you create varying signals by default, but you can always combine t
 ```
 
 ##Multiple tones##
+Okay now we're talking! Let's get deeeeep into the structure of the workshop. We defined different timber of sounds, but always the same frequency (i.e. the same pitch). We can change that by hard coding the 
 We need to have possibily multiple tones by synthetiser. For that we need a dynamic recording the notes we have, and a structure for those notes.
 
+First, we need a structure for each note that we will play.
+
 ```java
-...
+struct note {
+    float freq;
+    note(int _f) { freq = _f; }
+}
 ```
 
+Right now, we just have the frequency (the pitch) of the note, but more more will come later. Next, we need in our data object to add a vector of notes so we can play multiple ones `std::vector<note> listNotes = std::vector<note>();`.
+
+Now we need to be able to add notes. Why not using the keyboard for that and turning it into a real keyboard :D For that we need to add more keyPressed:
+
+```java
+// Key pressed
+    case sf::Event::KeyPressed:
+        switch (event.key.code)
+        {
+            case sf::Keyboard::Q: listNotes.push_back( note(261.626, data.iS) ); break;
+        } 
+    default;
+
+```
+
+Remark:  
+Of course, don't always add `case sf::Event::KeyPressed:`, just put your new keys logged in it.
+
+Now we can add maaaany new tunes. That's cool. But when we release the keys the sound doesn't go, and we go into madness. That's not what a nice workshop should be like. Let's tacke that issue.
+
+First let's create a fonction that seek and destroys tunes and add it to the data structure.
+
+```java
+    void releaseNotesByFreq( float _freq) {
+        for(int i=0; i<listNotes.size(); i++ )
+            if(listNotes.at(i).freq == _freq) {
+                listNotes.erase(listNotes.begin() + i);
+                break;
+            }
+    }
+```
+Then let's call it when keys are released:
+
+```java
+//Key released
+    case sf::Event::KeyReleased:
+        switch (event.key.code) {
+            case sf::Keyboard::Q:  data.releaseNotesByFreq(261.626); break;
+        }
+
+```
+And hell yeah, that's working :D Now the big question is, what are you still doing here? You shuld be touring already!
+
 ##Envelope of sound##
+You're already there? Holly molly you were fast! We're still ironing out the part of this workshop (read: it was too sunny outside to stay inside...). Some code will come up soon, and explanations will shortly follow.
+
+```java
+struct note {
+	
+	enum { ATTACK, DECAY, SUSTAIN, RELEASE, SLEEP} state = ATTACK; 
+	float freq;
+	int i_start;
+	// Attack Decay Sustain Release
+	float t_a = 1.2;
+	float t_d = 0.3;
+	float a_s = 0.7;
+	float t_r = 0.1;
+	
+	note(float _freq, int _i) { freq = _freq; i_start =_i; }
+
+	//Attack Decay Sustain Release
+	float ADSR( int _i) {
+
+	    float tps = 1.0/4410;
+	    switch(state) {
+		case ATTACK:
+//		    std::cout << "A " << (_i - i_start)*tps << " " << (_i - i_start)*tps/t_a<< std::endl;
+		    if( (_i - i_start)*tps > t_a) {
+			i_start = _i;
+			state=DECAY;
+		    }
+		    return (_i - i_start)*tps/t_a;
+		    break;
+
+		case DECAY:
+//		    std::cout << "D " << (_i - i_start)*tps << std::endl;
+		    if( (_i - i_start)*tps > t_d) {
+			i_start = _i;
+			state=SUSTAIN;
+		    }
+		    return 1-(1-a_s)*(_i - i_start)*tps/t_d;
+		    break;
+
+		case SUSTAIN:
+//		    std::cout << "S " << std::endl;
+		    return a_s;
+		    break;
+
+		case RELEASE:
+//		    std::cout << "R " << (_i - i_start)*tps << std::endl;
+		    if( (_i - i_start)*tps > t_r)
+			state=SLEEP;
+		    return a_s*(1-(_i - i_start)*tps/t_r);
+		    break;
+
+	    }
+
+	    return 1;
+	}
+
+};
+```
+
+And add in the callback:
 
