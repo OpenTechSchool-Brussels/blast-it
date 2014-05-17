@@ -46,7 +46,7 @@ In case of an error occuring, RtAudio functions throw exceptions instead of retu
 	catch (RtAudioError& e)
 	{
 		std::cout << '\n' << e.getMessage() << '\n' << std::endl;
-		exit( 1 );
+		return EXIT_FAILURE;
 	}
 ```
 
@@ -86,6 +86,7 @@ Now that everything's in place, it's time to test that out by starting our audio
 	catch (RtAudioError& e)
 	{
 		std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+		return EXIT_FAILURE;
 	}
 ```
 
