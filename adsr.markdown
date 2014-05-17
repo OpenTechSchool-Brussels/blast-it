@@ -1,7 +1,7 @@
 ---
 layout: default
 num: 5
-title: "Attack Decay Sustain Release It!"
+title: "Attack Decay Sustain Release"
 ---
 
 ##Envelope of sound##
