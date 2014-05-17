@@ -53,6 +53,7 @@ In case of an error occuring, RtAudio functions throw exceptions instead of retu
 In order for the callback to be called, we need to define it! The call back has already a structure for us. It takes in input references to the outputBuffer (what will be heard) and the inputBuffer (what we recorded), as well as the number of frames in those buffers, the stream time, a status variable and last but not least: our data object. This fonction is a global one, so you need to type it at the root of your code (before your main function).
 
 The 'ioCallback' function will hence be called every 512 samples. Since we've setup a 44100Hz stream, the function will be called every 1000 / (44100 / 512) = 0.0116 seconds (11.6 milliseconds). Let's check that by displaying the streamTime that's given by the callback function:
+
 ```
 int ioCallback (void *outputBuffer,
                 void *inputBuffer,
